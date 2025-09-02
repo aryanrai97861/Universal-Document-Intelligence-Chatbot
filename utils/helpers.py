@@ -91,7 +91,7 @@ def validate_environment_variables() -> Dict[str, bool]:
     import os
     
     required_vars = {
-        'OPENAI_API_KEY': os.getenv('OPENAI_API_KEY'),
+    'EMBEDDING_MODEL': os.getenv('EMBEDDING_MODEL'),
         'GEMINI_API_KEY': os.getenv('GEMINI_API_KEY'),
         'SERPER_API_KEY': os.getenv('SERPER_API_KEY')
     }

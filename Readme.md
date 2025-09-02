@@ -20,25 +20,25 @@ Preferred communication style: Simple, everyday language.
 - **Modular Component Design**: Separated into distinct components for document processing, vector storage, query routing, web search, and LLM handling
 - **Document Processing**: PyPDF2-based PDF text extraction with intelligent chunking that preserves document structure and metadata
 - **Query Routing Logic**: Rule-based system that analyzes queries for temporal keywords, explanatory terms, comparisons, and current data requests to determine optimal search strategy
-- **Vector Search**: Semantic similarity search using ChromaDB with OpenAI embeddings for document retrieval
+-- **Vector Search**: Semantic similarity search using ChromaDB with sentence-transformers embeddings for document retrieval
 - **LLM Integration**: Gemini 2.5 Flash model for generating contextual responses from both document and web sources
 
 ### Data Storage Solutions
 - **Vector Database**: ChromaDB persistent storage for document embeddings with cosine similarity search
-- **Embedding Model**: OpenAI text-embedding-3-small for converting text to vector representations
+-- **Embedding Model**: Configurable Sentence-Transformers model (default: all-MiniLM-L6-v2)
 - **Document Chunking**: Configurable chunk size (1000 characters) with overlap (200 characters) for optimal retrieval
 - **Metadata Preservation**: Maintains filename, page numbers, and document structure information
 
 ### Authentication and Authorization
 - **API Key Management**: Environment variable-based configuration for external service credentials
-- **Required Keys**: GEMINI_API_KEY, OPENAI_API_KEY, SERPER_API_KEY
+- **Required Keys**: GEMINI_API_KEY, SERPER_API_KEY
 - **No User Authentication**: Single-user application design without login requirements
 
 ## External Dependencies
 
 ### AI and ML Services
 - **Google Gemini 2.5 Flash**: Primary LLM for response generation and reasoning
-- **OpenAI Embeddings API**: Text embedding generation for semantic search
+- **Embeddings**: sentence-transformers (local models) for generating text embeddings for semantic search
 - **Sentence Transformers**: Alternative embedding option mentioned in documentation
 
 ### Search and Data Sources

@@ -9,7 +9,7 @@ This guide will help you set up and run the Universal Document Intelligence Chat
 
 ## Quick Start
 
-1. Install dependencies: `pip install streamlit chromadb openai google-genai PyPDF2 requests python-dotenv`
+1. Install dependencies: `pip install streamlit chromadb sentence-transformers google-genai PyPDF2 requests python-dotenv`
 2. Copy `.env.example` to `.env` and add your API keys
 3. Run: `streamlit run app.py --server.port 5000`
 4. Open http://localhost:5000 in your browser
@@ -21,7 +21,7 @@ This guide will help you set up and run the Universal Document Intelligence Chat
 Run the following command to install all required Python packages:
 
 ```bash
-pip install streamlit chromadb openai google-genai PyPDF2 requests python-dotenv
+pip install streamlit chromadb sentence-transformers google-genai PyPDF2 requests python-dotenv
 ```
 
 ### 2. Set Up Environment Variables
@@ -35,8 +35,8 @@ cp .env.example .env
 Then edit the `.env` file and add your actual API keys:
 
 ```bash
-# OpenAI API Key for document embeddings
-OPENAI_API_KEY=your_actual_openai_key_here
+# Optional: set a sentence-transformers model for embeddings (default shown)
+EMBEDDING_MODEL=all-MiniLM-L6-v2
 
 # Google Gemini API Key for AI responses
 GEMINI_API_KEY=your_actual_gemini_key_here
@@ -66,14 +66,10 @@ port = 5000
 
 ### Required API Keys
 
-#### 1. OpenAI API Key
-- **Purpose**: Used for generating document embeddings for semantic search
-- **Get it from**: https://platform.openai.com/api-keys
-- **Steps**:
-  1. Create an OpenAI account
-  2. Go to API Keys section
-  3. Create new secret key
-  4. Copy the key (starts with `sk-`)
+#### 1. Embeddings
+- **Purpose**: This project uses sentence-transformers for generating embeddings for semantic search. No external API key is required by default.
+
+- **Optional**: If you want to change the model, set the `EMBEDDING_MODEL` environment variable to a sentence-transformers model name (for example `all-mpnet-base-v2`).
 
 #### 2. Google Gemini API Key
 - **Purpose**: Used for generating intelligent responses and reasoning
