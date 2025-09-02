@@ -24,16 +24,23 @@ def main():
     
     # Initialize components
     if 'components_initialized' not in st.session_state:
-        try:
-            st.session_state.doc_processor = DocumentProcessor()
-            st.session_state.vector_store = VectorStore()
-            st.session_state.query_router = QueryRouter()
-            st.session_state.web_search = WebSearch()
-            st.session_state.llm_handler = LLMHandler()
-            st.session_state.components_initialized = True
-        except Exception as e:
-            st.error(f"Failed to initialize components: {str(e)}")
-            st.stop()
+            try:
+                st.session_state.doc_processor = DocumentProcessor()
+                st.session_state.vector_store = VectorStore()
+                st.session_state.query_router = QueryRouter()
+                # WebSearch may require an API key; initialize safely
+                try:
+                    st.session_state.web_search = WebSearch()
+                    st.session_state.web_search_available = True
+                except Exception:
+                    st.session_state.web_search = None
+                    st.session_state.web_search_available = False
+
+                st.session_state.llm_handler = LLMHandler()
+                st.session_state.components_initialized = True
+            except Exception as e:
+                st.error(f"Failed to initialize components: {str(e)}")
+                st.stop()
     
     # Sidebar for document management
     with st.sidebar:
@@ -157,23 +164,38 @@ def handle_user_query(user_input):
                             user_input, relevant_docs
                         )
                     else:
-                        # No relevant documents found, fallback to web search
+                        # No relevant documents found, fallback to web search if available
+                        if st.session_state.get('web_search_available') and st.session_state.web_search is not None:
+                            web_results = st.session_state.web_search.search(user_input)
+                            response_data = st.session_state.llm_handler.generate_web_response(
+                                user_input, web_results
+                            )
+                        else:
+                            response_data = {
+                                'response': "I couldn't find relevant information in your documents and web search is not available. Please upload more documents or enable SERPER_API_KEY for web search.",
+                                'sources': []
+                            }
+                        
+                elif route_decision['route'] == 'web':
+                    # Search on web (if available)
+                    if st.session_state.get('web_search_available') and st.session_state.web_search is not None:
                         web_results = st.session_state.web_search.search(user_input)
                         response_data = st.session_state.llm_handler.generate_web_response(
                             user_input, web_results
                         )
-                        
-                elif route_decision['route'] == 'web':
-                    # Search on web
-                    web_results = st.session_state.web_search.search(user_input)
-                    response_data = st.session_state.llm_handler.generate_web_response(
-                        user_input, web_results
-                    )
+                    else:
+                        response_data = {
+                            'response': "Web search is currently unavailable (SERPER_API_KEY not set). Please enable it in your environment to allow web-based answers.",
+                            'sources': []
+                        }
                     
                 else:
                     # Hybrid approach
                     relevant_docs = st.session_state.vector_store.search(user_input, k=2)
-                    web_results = st.session_state.web_search.search(user_input)
+                    if st.session_state.get('web_search_available') and st.session_state.web_search is not None:
+                        web_results = st.session_state.web_search.search(user_input)
+                    else:
+                        web_results = []
                     response_data = st.session_state.llm_handler.generate_hybrid_response(
                         user_input, relevant_docs, web_results
                     )
