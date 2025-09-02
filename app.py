@@ -1,5 +1,9 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env if present
+load_dotenv()
 from pathlib import Path
 from components.document_processor import DocumentProcessor
 from components.vector_store import VectorStore

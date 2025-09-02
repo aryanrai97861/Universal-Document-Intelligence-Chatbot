@@ -7,11 +7,16 @@ class LLMHandler:
     """Handles LLM interactions using Gemini 2.5 Flash"""
     
     def __init__(self):
-        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key or not api_key.strip():
+            raise ValueError("GEMINI_API_KEY environment variable is required. Please set GEMINI_API_KEY in your environment or .env file.")
+
+        try:
+            self.client = genai.Client(api_key=api_key)
+        except Exception as e:
+            raise RuntimeError(f"Failed to initialize Google GenAI client: {e}")
+
         self.model = "gemini-2.5-flash"
-        
-        if not os.getenv("GEMINI_API_KEY"):
-            raise ValueError("GEMINI_API_KEY environment variable is required")
     
     def generate_document_response(self, query: str, relevant_docs: List[Dict]) -> Dict:
         """
